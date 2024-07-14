@@ -15,19 +15,21 @@ white = (255, 255, 255)
 red = (255, 0, 0)
 black = (0, 0, 0)
 gray = (128, 128, 128)
+orange = (255, 165, 0)
 
 target_min_radius = 10
 target_max_radius = 30
 target_life_time = 2000
 num_targets = 5
-max_missed_targets = 1
+max_missed_targets = 100
+gray_bar_height = 40
 
 clock = pygame.time.Clock()
 
 class Target:
     def __init__(self):
         self.x = random.randint(target_max_radius, screen_width - target_max_radius)
-        self.y = random.randint(target_max_radius, screen_height - target_max_radius)
+        self.y = random.randint(gray_bar_height + target_max_radius, screen_height - target_max_radius)
         self.life_time = target_life_time
         self.radius = target_min_radius
         self.growing = True
@@ -63,13 +65,15 @@ def create_button(surface, text, font, color, rect_color, rect_position):
     return rect
 
 def reset_game():
-    global score, missed_targets, reaction_times, last_hit_time, targets, game_over
+    global score, missed_targets, reaction_times, last_hit_time, targets, game_over, start_time, elapsed_time
     score = 0
     missed_targets = 0
     reaction_times = []
     last_hit_time = None
     targets = [Target() for _ in range(num_targets)]
     game_over = False
+    start_time = time.time()
+    elapsed_time = 0
 
 reset_game()
 
@@ -77,7 +81,9 @@ running = True
 
 while running:
     delta_time = clock.tick(60)
-    screen.fill(gray)
+    screen.fill(orange)
+
+    pygame.draw.rect(screen, gray, [0, 0, screen_width, gray_bar_height])
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -92,13 +98,14 @@ while running:
                     distance = math.hypot(mouse_x - target.x, mouse_y - target.y)
                     if distance < target.radius:
                         score += 1
-                        reaction_times.append(time.time() - last_hit_time if last_hit_time else 0)
+                        reaction_times.append((time.time() - last_hit_time) * 1000 if last_hit_time else 0)
                         last_hit_time = time.time()
                         targets.remove(target)
                         targets.append(Target())
                         break
 
     if not game_over:
+        elapsed_time = time.time() - start_time
         for target in targets:
             if not target.update(delta_time):
                 targets.remove(target)
@@ -109,18 +116,22 @@ while running:
 
             target.draw(screen)
 
-    font = pygame.font.SysFont(None, 36)
+    font = pygame.font.SysFont(None, 24)
     score_text = font.render(f"Score: {score}", True, black)
     missed_text = font.render(f"Missed: {missed_targets}/{max_missed_targets}", True, black)
-    screen.blit(score_text, (10, 10))
-    screen.blit(missed_text, (screen_width - missed_text.get_width() - 10, 10))
+    time_text = font.render(f"Time: {elapsed_time:.2f} s", True, black)
+
+    screen.blit(score_text, (10, 5))
+    screen.blit(missed_text, (200, 5))
+    screen.blit(time_text, (400, 5))
 
     if reaction_times:
         avg_reaction_time = sum(reaction_times) / len(reaction_times)
-        reaction_text = font.render(f"Avg Reaction Time: {avg_reaction_time:.2f} s", True, black)
-        screen.blit(reaction_text, (10, 50))
+        reaction_text = font.render(f"Avg Reaction Time: {avg_reaction_time:.2f} ms", True, black)
+        screen.blit(reaction_text, (screen_width - reaction_text.get_width() - 10, 5))
 
     if game_over:
+        font = pygame.font.SysFont(None, 36)
         end_text = font.render("GAME OVER", True, red)
         screen.blit(end_text, (screen_width / 2 - end_text.get_width() / 2, screen_height / 2 - end_text.get_height() / 2))
         play_again_button = create_button(screen, "PLAY AGAIN", font, white, black, (screen_width / 2 - 85, screen_height / 2 + 40, 170, 48))
