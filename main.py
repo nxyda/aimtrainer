@@ -1,8 +1,10 @@
 import pygame
 import sys
-import aim_trainer  
+import aim_trainer
+import double_shot
 
 pygame.init()
+
 
 def main():
     screen_width = 800
@@ -42,9 +44,9 @@ def main():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
                 if aim_trainer_button.collidepoint(mouse_x, mouse_y):
-                    aim_trainer.main()  
+                    aim_trainer.main()
                 elif double_shot_button.collidepoint(mouse_x, mouse_y):
-                    pass
+                    double_shot.main()
                 elif reflex_button.collidepoint(mouse_x, mouse_y):
                     pass
                 elif target_tracking_button.collidepoint(mouse_x, mouse_y):
@@ -52,18 +54,25 @@ def main():
 
         font = pygame.font.SysFont(None, 48)
         title_text = font.render("Aim Trainer", True, black)
-        screen.blit(title_text, (screen_width / 2 - title_text.get_width() / 2, 20))
+        screen.blit(title_text,
+                    (screen_width / 2 - title_text.get_width() / 2, 20))
 
-        aim_trainer_button = create_image_button(screen, aim_trainer_img, (screen_width / 2, 200))
-        double_shot_button = create_image_button(screen, double_shot_img, (screen_width / 2, 300))
-        reflex_button = create_image_button(screen, reflex_img, (screen_width / 2, 400))
-        target_tracking_button = create_image_button(screen, target_tracking_img, (screen_width / 2, 500))
+        aim_trainer_button = create_image_button(screen, aim_trainer_img,
+                                                 (screen_width / 2, 200))
+        double_shot_button = create_image_button(screen, double_shot_img,
+                                                 (screen_width / 2, 300))
+        reflex_button = create_image_button(screen, reflex_img,
+                                            (screen_width / 2, 400))
+        target_tracking_button = create_image_button(screen,
+                                                     target_tracking_img,
+                                                     (screen_width / 2, 500))
 
         pygame.display.flip()
         clock.tick(60)
 
     pygame.quit()
     sys.exit()
+
 
 if __name__ == "__main__":
     main()

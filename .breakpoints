@@ -1,3 +1,12 @@
 {
-  "files": {}
+  "files": {
+    "double_shot.py": [
+      {
+        "id": "ca0574fa-fe48-479c-9360-1836b00be22a",
+        "line": 1,
+        "version": 0,
+        "index": 0
+      }
+    ]
+  }
 }
