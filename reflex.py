@@ -34,18 +34,28 @@ def main():
             color = colors[i % 2]
             pygame.draw.circle(surface, color, position, int(radius * (i / steps)))
 
-    running = True
-    trial_count = 0
-    target_visible = False
-    target_appear_time = 0
-    trial_delay = random.uniform(1, 4)
-    last_reaction_time = None  
+    def create_button(surface, text, font, color, rect_color, rect_position):
+        rect = pygame.Rect(rect_position)
+        pygame.draw.rect(surface, rect_color, rect)
+        draw_text(surface, text, font, color, (rect.x + 10, rect.y + 10))
+        return rect
+
+    def reset_game():
+        nonlocal trial_count, target_visible, target_appear_time, trial_delay, last_reaction_time, reaction_times
+        trial_count = 0
+        target_visible = False
+        target_appear_time = 0
+        trial_delay = random.uniform(1, 4)
+        last_reaction_time = None
+        reaction_times = []
+        pygame.time.set_timer(pygame.USEREVENT, int(trial_delay * 1000)) 
 
     font = pygame.font.SysFont(None, 48)
     small_font = pygame.font.SysFont(None, 36)
 
-    pygame.time.set_timer(pygame.USEREVENT, int(trial_delay * 1000))
+    reset_game()
 
+    running = True
     while running:
         screen.fill(orange)
 
@@ -69,9 +79,28 @@ def main():
                         draw_text(screen, result_text, font, black,
                                   (screen_width / 2 - font.size(result_text)[0] / 2,
                                    screen_height / 2 - font.size(result_text)[1] / 2))
+
+                        play_again_button = create_button(screen, "PLAY AGAIN", small_font, white, black, (screen_width / 2 - 85, screen_height / 2 + 40, 170, 48))
+                        main_menu_button = create_button(screen, "MAIN MENU", small_font, white, black, (screen_width / 2 - 85, screen_height / 2 + 100, 170, 48))
+
                         pygame.display.flip()
-                        pygame.time.delay(3000)
-                        running = False
+
+                        waiting_for_input = True
+                        while waiting_for_input:
+                            for event in pygame.event.get():
+                                if event.type == pygame.QUIT:
+                                    pygame.quit()
+                                    sys.exit()
+                                elif event.type == pygame.MOUSEBUTTONDOWN:
+                                    mouse_x, mouse_y = event.pos
+                                    if play_again_button.collidepoint(mouse_x, mouse_y):
+                                        reset_game()  
+                                        waiting_for_input = False  
+                                    elif main_menu_button.collidepoint(mouse_x, mouse_y):
+                                        import main
+                                        main.main()
+
+                        continue  
 
             elif event.type == pygame.USEREVENT and not target_visible and trial_count < num_trials:
                 target_appear_time = time.time()
