@@ -3,6 +3,7 @@ import sys
 import aim_trainer
 import double_shot
 import reflex
+import target_tracking
 
 pygame.init()
 
@@ -51,7 +52,7 @@ def main():
                 elif reflex_button.collidepoint(mouse_x, mouse_y):
                     reflex.main()
                 elif target_tracking_button.collidepoint(mouse_x, mouse_y):
-                    pass
+                    target_tracking.main()
 
         font = pygame.font.SysFont(None, 48)
         title_text = font.render("Aim Trainer", True, black)
