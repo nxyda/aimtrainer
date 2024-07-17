@@ -86,6 +86,10 @@ def main():
                 if game_over:
                     if play_again_button.collidepoint(mouse_x, mouse_y):
                         reset_game()
+                    elif main_menu_button.collidepoint(mouse_x, mouse_y):
+                        import main
+                        main.main()  
+                        return
                 else:
                     for target in targets:
                         distance = math.hypot(mouse_x - target.x, mouse_y - target.y)
@@ -120,6 +124,7 @@ def main():
             end_text = font.render("GAME OVER", True, red)
             screen.blit(end_text, (screen_width / 2 - end_text.get_width() / 2, screen_height / 2 - end_text.get_height() / 2))
             play_again_button = create_button(screen, "PLAY AGAIN", font, white, black, (screen_width / 2 - 85, screen_height / 2 + 40, 170, 48))
+            main_menu_button = create_button(screen, "MAIN MENU", font, white, black, (screen_width / 2 - 85, screen_height / 2 + 100, 170, 48))
 
         pygame.display.flip()
 

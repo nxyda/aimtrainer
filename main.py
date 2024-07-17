@@ -2,6 +2,7 @@ import pygame
 import sys
 import aim_trainer
 import double_shot
+import reflex
 
 pygame.init()
 
@@ -48,7 +49,7 @@ def main():
                 elif double_shot_button.collidepoint(mouse_x, mouse_y):
                     double_shot.main()
                 elif reflex_button.collidepoint(mouse_x, mouse_y):
-                    pass
+                    reflex.main()
                 elif target_tracking_button.collidepoint(mouse_x, mouse_y):
                     pass
 
